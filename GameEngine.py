@@ -99,3 +99,63 @@ class GameEngine:
 
         # Calling the initRabbits() method
         self.initRabbits()
+
+    #Calculation of the remaining veggies
+    def remainingVeggies(self):
+        remaining_veggies = sum(row.count(None) for row in self.field)
+        return remaining_veggies
+
+    #Introduction of the game to the user
+    def intro(self):
+        print("Welcome to the Vegetable Harvest Game!")
+        print("In this game, you will play as Captain Veggie and your goal is to harvest as many vegetables as possible.")
+        print("Be careful of the rabbits roaming in the field, as they may eat the vegetables!")
+        print("\nList of Possible Vegetables:")
+        for veggie in self.vegetables:
+            veggie.printInfo()  # Replace with the appropriate method in your Veggie class
+        print(f"\nCaptain Veggie Symbol: {self.captain.getSymbol()}")  # Replace with the appropriate method in your Captain class
+        print("Rabbit Symbol: R")
+
+    #Printing function
+    def printField(self):
+        print("Field:")
+        for row in self.field:
+            print(" | ".join(str(cell) if cell is not None else " " for cell in row))
+            print("-" * (4 * len(row) - 1))
+
+    # Function to get the score value
+    def getScore(self):
+        return self.score
+
+    # A function that moves the rabbit object in the game
+    def moveRabbits(self):
+        for rabbit in self.rabbits:
+            # Store the current location of the Rabbit
+            current_row, current_col = rabbit.getRow(), rabbit.getCol()
+
+            # Choose a random direction (up, down, left, right, diagonal, or no move)
+            move_direction = random.choice([(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (0, 0)])
+
+            # Calculate the new location
+            new_row, new_col = current_row + move_direction[0], current_col + move_direction[1]
+
+            # Check if the new location is within the boundaries of the field
+            if 0 <= new_row < len(self.field) and 0 <= new_col < len(self.field[0]):
+                # Check if the new location is not occupied by another Rabbit or Captain
+                if self.field[new_row][new_col] is None or isinstance(self.field[new_row][new_col], Veggie):
+                    # Move the Rabbit to the new location
+                    self.field[current_row][current_col] = None
+                    self.field[new_row][new_col] = rabbit
+
+                    # Update Rabbit's member variables with the new location
+                    rabbit.setRow(new_row)
+                    rabbit.setCol(new_col)
+
+                    # If Rabbit moved into a space occupied by Veggie, remove the Veggie from the field
+                    if isinstance(self.field[new_row][new_col], Veggie):
+                        self.score += self.field[new_row][new_col].getPoints()
+                        self.field[new_row][new_col] = rabbit
+
+                    # If Rabbit moved, set its previous location to None
+                    if current_row != new_row or current_col != new_col:
+                        self.field[current_row][current_col] = None
