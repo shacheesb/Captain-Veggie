@@ -159,3 +159,109 @@ class GameEngine:
                     # If Rabbit moved, set its previous location to None
                     if current_row != new_row or current_col != new_col:
                         self.field[current_row][current_col] = None
+                        
+#For movement of the captian
+    def moveCptVertical(self, vertical_movement):
+        current_row, current_col = self.captain.getRow(), self.captain.getCol()
+
+        # Calculate the new location based on the vertical movement
+        new_row, new_col = current_row + vertical_movement, current_col
+
+        # Check if the new location is within the boundaries of the field
+        if 0 <= new_row < len(self.field):
+            target_object = self.field[new_row][new_col]
+
+            # If the new location is an empty slot
+            if target_object is None:
+                self.field[current_row][current_col] = None
+                self.field[new_row][new_col] = self.captain
+                self.captain.setRow(new_row)
+                self.captain.setCol(new_col)
+
+            # If the new location is occupied by a Veggie
+            elif isinstance(target_object, Veggie):
+                veggie_name = target_object.getName()
+                veggie_points = target_object.getPoints()
+
+                print(f"A delicious vegetable ({veggie_name}) has been found!")
+                self.captain.addVeggie(target_object)
+                self.score += veggie_points
+
+                self.field[current_row][current_col] = None
+                self.field[new_row][new_col] = self.captain
+                self.captain.setRow(new_row)
+                self.captain.setCol(new_col)
+
+            # If the new location is occupied by a Rabbit
+            elif isinstance(target_object, Rabbit):
+                print("Oops! You should not step on the rabbits.")
+                # Do not move the Captain object
+
+            # If the Captain moved, set its previous location to None
+            if current_row != new_row or current_col != new_col:
+                self.field[current_row][current_col] = None
+
+    def moveCptHorizontal(self, horizontal_movement):
+        current_row, current_col = self.captain.getRow(), self.captain.getCol()
+
+        # Calculate the new location based on the horizontal movement
+        new_row, new_col = current_row, current_col + horizontal_movement
+
+        # Check if the new location is within the boundaries of the field
+        if 0 <= new_col < len(self.field[0]):
+            target_object = self.field[new_row][new_col]
+
+            # If the new location is an empty slot
+            if target_object is None:
+                self.field[current_row][current_col] = None
+                self.field[new_row][new_col] = self.captain
+                self.captain.setRow(new_row)
+                self.captain.setCol(new_col)
+
+            # If the new location is occupied by a Veggie
+            elif isinstance(target_object, Veggie):
+                veggie_name = target_object.getName()
+                veggie_points = target_object.getPoints()
+
+                print(f"A delicious vegetable ({veggie_name}) has been found!")
+                self.captain.addVeggie(target_object)
+                self.score += veggie_points
+
+                self.field[current_row][current_col] = None
+                self.field[new_row][new_col] = self.captain
+                self.captain.setRow(new_row)
+                self.captain.setCol(new_col)
+
+            # If the new location is occupied by a Rabbit
+            elif isinstance(target_object, Rabbit):
+                print("Oops! You should not step on the rabbits.")
+                # Do not move the Captain object
+
+            # If the Captain moved, set its previous location to None
+            if current_row != new_row or current_col != new_col:
+                self.field[current_row][current_col] = None
+
+    def moveCaptain(self):
+        valid_directions = ['w', 's', 'a', 'd', 'W', 'S', 'A', 'D']
+
+        # Prompt the user for direction input
+        direction = input("Enter the direction to move the Captain (Up: W, Down: S, Left: A, Right: D): ").lower()
+
+        # Check if the input is a valid direction
+        if direction in valid_directions:
+            # Check the user's input and call the appropriate movement function
+            if direction == 'w':
+                self.moveCptVertical(-1)  # Move up
+            elif direction == 's':
+                self.moveCptVertical(1)  # Move down
+            elif direction == 'a':
+                self.moveCptHorizontal(-1)  # Move left
+            elif direction == 'd':
+                self.moveCptHorizontal(1)  # Move right
+        else:
+            print("Invalid direction. Please enter a valid direction (W, S, A, D).")
+
+#A test run
+#game = GameEngine()
+#game.moveCaptain()
+
