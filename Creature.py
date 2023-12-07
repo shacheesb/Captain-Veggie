@@ -1,3 +1,7 @@
+# Author: Shachee SB, Pranav Parekh
+# Date: 5th December 2023
+# Description: Subclass of field inhabitant
+
 from FieldInhabitant import FieldInhabitant
 
 class Creature(FieldInhabitant):
