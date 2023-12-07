@@ -5,6 +5,7 @@ game.
 
 from FieldInhabitant import FieldInhabitant
 
+#A constructor that takes in two parameters representing the name and symbol of the vegetable and a value representing the number of points the vegetable is worth
 class Veggie(FieldInhabitant):
     #private variables
     def __init__(self, name, symbol, points):
