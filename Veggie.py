@@ -1,3 +1,8 @@
+# Author: Shachee SB, Pranav Parekh
+# Date: 5th December 2023
+# Description: Subclass of Field Inhabitant, contains the comma delimited information regarding the initial configuration of the 
+game.
+
 from FieldInhabitant import FieldInhabitant
 
 class Veggie(FieldInhabitant):
