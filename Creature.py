@@ -4,6 +4,7 @@
 
 from FieldInhabitant import FieldInhabitant
 
+# A constructor that takes in two parameters representing x and y coordinates and one representing the symbol for that creature 
 class Creature(FieldInhabitant):
     def __init__(self, x, y, symbol):
         super().__init__(symbol)
