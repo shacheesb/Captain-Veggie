@@ -1,3 +1,7 @@
+# Author: Shachee SB, Pranav Parekh
+# Date: 5th December 2023
+# Description: Sub class of Creature.
+
 from Creature import Creature
 
 class Captain(Creature):
