@@ -4,6 +4,7 @@
 
 from Creature import Creature
 
+# A constructor that takes in two values representing x and y coordinates
 class Rabbit(Creature):
     def __init__(self, x, y):
         super().__init__(x, y, "R")
