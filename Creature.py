@@ -22,3 +22,7 @@ class Creature(FieldInhabitant):
 
     def set_y(self, y):
         self._y = y
+        
+    #We add a string function to get symbol and corresponding position
+    def __str__(self):
+        return f"{self.get_symbol()}"
