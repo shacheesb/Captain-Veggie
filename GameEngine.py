@@ -14,7 +14,7 @@ from Rabbit import Rabbit, Creature
 from Veggie import Veggie, FieldInhabitant
 
 #For the bonus question
-from Snake import Snake
+#from Snake import Snake
 
 
 class GameEngine:
