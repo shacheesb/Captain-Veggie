@@ -1,4 +1,4 @@
-#Name: Pranav Parekh, Sachee
+#Name: Pranav Parekh, Shachee SB
 #Date: 12/01/2023
 #Description: Working on the GameEngine class to provide functionality to the game
 
@@ -12,6 +12,9 @@ import csv
 from Captain import Captain, Creature
 from Rabbit import Rabbit, Creature
 from Veggie import Veggie, FieldInhabitant
+
+#For the bonus question
+from Snake import Snake
 
 
 class GameEngine:
@@ -29,9 +32,12 @@ class GameEngine:
         self.vegetables = []  # List representing all possible vegetables in the game
         self.score = 0  # Variable representing the score
 
+        #For the Bonus
+        #self.snake = None
+
     #Loading the veggie file and performing initialization
     def initVeggies(self):
-        
+
         # Prompt the user for the name of the veggie file
         filename = input("Enter the name of the veggie file: ")
 
@@ -55,13 +61,15 @@ class GameEngine:
                     veggie_name, veggie_symbol, veggie_points = row
                     veggie = Veggie(veggie_name, veggie_symbol, int(veggie_points))
                     self.vegetables.append(veggie)
+                    #print(self.vegetables)
 
                 # Place the desired number of Veggie objects in the field
                 for _ in range(self._NUMBEROFVEGGIES):
                     if len(self.vegetables) <= self._NUMBEROFVEGGIES:
                         veggie = random.choice(self.vegetables)
-                        #veggies.remove(veggie)  # Remove placed veggie from the list
+                        #veggies.remove(veggie)
                         self.placeVeggieRandomly(veggie)
+
 
 
         except Exception as e:
@@ -91,7 +99,7 @@ class GameEngine:
             row, col = random.randint(0, len(self.field) - 1), random.randint(0, len(self.field[0]) - 1)
 
         # Create a new Captain object
-        captain = Captain(row, col)  # Replace with your Captain class and constructor
+        captain = Captain(row, col)
 
         # Set the initial position of the Captain
         captain.set_y(row)
@@ -157,19 +165,26 @@ class GameEngine:
         # Calling the initRabbits() method
         self.initRabbits()
 
+        #For the bonus question: Calling the initSnake() method
+        #self.initSnake()
+
     #Calculates the number of veggies remaining
     def remainingVeggies(self):
         # Count the number of non-empty slots in each row and sum them up
-        total_non_empty_slots = sum(row.count(obj) for row in self.field for obj in row if obj is not None)
+        #total_non_empty_slots = sum(row.count(obj) for row in self.field for obj in row if obj is not None)
+        #/ Simplifying the code/ Count will not work
+        total_non_empty_slots = 0
+        for row in self.field:
+            for obj in row:
+                if obj is not None:
+                    total_non_empty_slots += 1
 
         # Subtract the number of rabbits and the Captain present on the field
-        #total_non_empty_slots -= self.field.count(self.captain) + sum(row.count(Rabbit) for row in self.field)
-        total_non_empty_slots -= sum(row.count(self.captain) for row in self.field)
-        total_non_empty_slots -= sum(row.count(self.rabbits) for row in self.field for rabbit in self.rabbits)
-        #print(total_non_empty_slots)
-        #print(self.captain)
-        #print(self.rabbits)
-        # Return the total count of remaining vegetable objects
+        #total_non_empty_slots -= 6
+
+        #If we include the Snake as per our bonus question, we should subtract 7 instead of 6
+        total_non_empty_slots -= 7
+
         return total_non_empty_slots
 
     #Introduction of the game to the user
@@ -400,5 +415,93 @@ class GameEngine:
             # Pickle the List of high scores to the file
             pickle.dump(high_scores, file)
 
-   #Bonus Portion Attempt (Not tested): 
 
+"""
+    #Bonus Question: Snake functions
+    #Performing initialization of the snake in the same manner as that of the captain
+    def initSnake(self):
+        if self.snake is None:
+            # Choose a random location for the Snake object
+            row, col = random.randint(0, len(self.field) - 1), random.randint(0, len(self.field[0]) - 1)
+
+            # Check if the chosen location is occupied
+            while self.field[row][col] is not None:
+                row, col = random.randint(0, len(self.field) - 1), random.randint(0, len(self.field[0]) - 1)
+
+            # Create a new Snake object
+            snake = Snake(row, col)
+
+            # Set the initial position of the Snake
+            snake.set_y(row)
+            snake.set_x(col)
+
+            # Add the Snake object to the list of snakes
+            #self.snake = snake
+
+            # Place the Snake object in the chosen location on the field
+            self.field[row][col] = snake
+
+    def moveSnake(self):
+        # Check if the snake object exists
+        if self.snake is not None:
+            # Get the current position of the captain
+            captain_pos_x, captain_pos_y = self.captain.get_x(), self.captain.get_y()
+
+            # Calculate the direction from the snake towards the captain
+            direction_x, direction_y = self.calculateSnakeDirection(captain_pos_x, captain_pos_y)
+
+            # Calculate the new position for the snake
+            new_row, new_col = self.snake.get_y() + direction_y, self.snake.get_x() + direction_x
+
+            # Check if the new position is within the boundaries of the field
+            if 0 <= new_row < len(self.field) and 0 <= new_col < len(self.field[0]):
+                target_object = self.field[new_row][new_col]
+
+                # Check if the new location is not occupied by a vegetable or rabbit
+                if target_object is None or target_object.get_symbol() == 'V':
+                    # Move the snake to the new location
+                    self.field[self.snake.get_y()][self.snake.get_x()] = None
+                    self.field[new_row][new_col] = self.snake
+                    self.snake.y, self.snake.x = new_row, new_col
+
+                    # If the snake moved into a space occupied by Captain, deduct vegetables
+                    if target_object is not None and target_object.get_symbol() == 'V':
+                        self.deductVegetablesFromCaptain(5)
+                        self.resetSnakePosition()
+                else:
+                    # If the new location is occupied by a vegetable or rabbit, reset the snake position
+                    self.resetSnakePosition()
+            else:
+                # If the new location is outside the field, reset the snake position
+                self.resetSnakePosition()
+
+    def calculateSnakeDirection(self, captain_pos_x, captain_pos_y):
+        # Calculate the direction from the snake towards the captain
+        row_diff = captain_pos_y - self.snake.get_y()
+        col_diff = captain_pos_x - self.snake.get_x()
+
+        # Determine the direction to move
+        if abs(row_diff) > abs(col_diff):
+            return (1 if row_diff > 0 else -1, 0)
+        else:
+            return (0, 1 if col_diff > 0 else -1)
+
+    def deductVegetablesFromCaptain(self, amount):
+        # Deduct vegetables from the captain's basket
+        if amount > 0:
+            captain = self.field[self.snake.get_y()][self.snake.get_x()]
+            captain.deductVegetables(amount)
+
+    #We want to reset the snake position after the snake has discovered the captain
+    def resetSnakePosition(self):
+        if self.snake is not None:
+            # Reset the snake to a new random, unoccupied position on the field
+            empty_positions = [(r, c) for r in range(len(self.field)) for c in range(len(self.field[0])) if
+                               self.field[r][c] is None]
+            if empty_positions:
+                new_pos_x, new_pos_y = random.choice(empty_positions)
+                self.field[self.snake.get_y()][self.snake.get_x()] = None
+                self.field[new_pos_x][new_pos_y] = self.snake
+                self.snake.y, self.snake.x = new_pos_y, new_pos_x
+
+"""
