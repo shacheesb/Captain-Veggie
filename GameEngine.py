@@ -180,10 +180,10 @@ class GameEngine:
                     total_non_empty_slots += 1
 
         # Subtract the number of rabbits and the Captain present on the field
-        #total_non_empty_slots -= 6
+        total_non_empty_slots -= 6
 
         #If we include the Snake as per our bonus question, we should subtract 7 instead of 6
-        total_non_empty_slots -= 7
+        #total_non_empty_slots -= 7
 
         return total_non_empty_slots
 
